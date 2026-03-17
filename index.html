@@ -7,102 +7,110 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
   <div class="floating-logos home-only">
-  <a href="https://vokasi.uns.ac.id" target="_blank">
-    <img src="LOGO BARU SEKOLAH VOKASI.png" alt="Logo UNS">
-  </a>
-
-  <a href="https://uns.ac.id" target="_blank">
-    <img src="1000014489.png" alt="Logo 2">
-  </a>
-</div>
-<a href="https://www.donlim.com" target="_blank" class="logo-top-left home-only">
-  <img src="1000009464.png" alt="Logo Donlim">
-</a>
-<header class="header">
-  <div class="header-text">
-    <h1>Buku Kosakata Digital</h1>
-    <h2>Mandarin – Indonesia</h2>
-    <p>Quality Control Injeksi</p>
-    <p class="author">PT Donlim Technology Indonesia</p>
-    <p class="author">Penulis: Yeshinta Happy Cantika Surya 叶昕悦</p>
+    <a href="https://vokasi.uns.ac.id" target="_blank">
+      <img src="LOGO BARU SEKOLAH VOKASI.png" alt="Logo UNS">
+    </a>
+    <a href="https://uns.ac.id" target="_blank">
+      <img src="1000014489.png" alt="Logo 2">
+    </a>
+    <a href="https://www.donlim.com" target="_blank">
+      <img src="1000009464.png" alt="Logo Donlim">
+    </a>
   </div>
-</header>
-
-<nav class="nav">
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
-
-    <div class="nav-links" id="navLinks">
-      <button onclick="showSection('home')">Beranda</button>
-      <button onclick="showSection('kamus')">Kosakata</button>
-      <button onclick="showSection('quiz')">Quiz</button>
-  </div>
-</nav>
-
-<section id="home" class="section">
-
-  <div class="bg-top home-only"></div>
-  <div class="bg-bottom home-only"></div>
-</section>
-<!-- ===== KAMUS ===== -->
- <section id="kamus" class="section">
-
-  <div class="kamus-top">
-    <input type="text" id="search"
-      placeholder="Cari Indonesia / Mandarin / Pinyin..." />
-
-    <div class="tabs">
-      <button class="tab-btn active"
-        onclick="setCategory('all', this)">Semua</button>
-
-      <button class="tab-btn"
-        onclick="setCategory('umum', this)">Kosakata Umum</button>
-
-      <button class="tab-btn"
-        onclick="setCategory('cacat produk', this)">Kosakata Cacat Produk</button>
-
-      <button class="tab-btn"
-        onclick="setCategory('peralatan perbaikan', this)">Kosakata Peralatan Perbaikan</button>
+  </a>
+  <header class="header">
+    <div class="header-text">
+      <h1>Buku Kosakata Digital</h1>
+      <h2>Mandarin – Indonesia</h2>
+      <p>>注塑项目部词汇</p>
+      <p> Quality Control Injeksi</p>
+      <p class="author">PT Donlim Technology Indonesia</p>
+      <p class="author">Disusun oleh: Yeshinta Happy 叶昕悦</p>
     </div>
-  </div>
+  </header>
 
-  <div id="vocab-list" class="list"></div>
+  <!-- NAVIGATION -->
+  <nav class="nav">
+    <div class="nav-container">
+      <div class="menu-toggle" onclick="toggleMenu(this)">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <button onclick="showSection('home')"> Beranda</button>
+        <button onclick="showSection('kamus')"> Kosakata</button>
+        <button onclick="showSection('quiz')"> Quiz</button>
+      </div>
+    </div>
+  </nav>
+  <!-- SECTION HOME -->
+  <section id="home" class="section">
+    <div class="bg-top home-only"></div>
+    <div class="bg-bottom home-only"></div>
+  </section>
 
-</section>
-
-
-<!-- ===== QUIZ ===== -->
+  <!-- SECTION KAMUS -->
+  <section id="kamus" class="section">
+    <div class="kamus-top">
+      <div class="search-wrapper">
+        <input type="text" id="search" placeholder="Cari Indonesia / Mandarin / Pinyin...">
+        <span class="search-icon">🔍</span>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" onclick="setCategory('all', this)">Semua</button>
+        <button class="tab-btn" onclick="setCategory('umum', this)">Kosakata Umum</button>
+        <button class="tab-btn" onclick="setCategory('cacat produk', this)">Kosakata Cacat Produk</button>
+        <button class="tab-btn" onclick="setCategory('peralatan perbaikan', this)">Kosakata Peralatan Perbaikan</button>
+        <button class="tab-btn" id="favorites-tab" onclick="showFavorites()">⭐ Favorit</button>
+      </div>
+    </div>
+    <div id="vocab-list" class="list"></div>
+  </section>
+  <!-- SECTION QUIZ -->
 <section id="quiz" class="section">
   <div class="quiz-container">
-    
     <div class="quiz-card">
-
       <div class="quiz-header">
-        <span id="quiz-level">Level: 1</span>
-        <span id="quiz-score">Skor: 0</span>
+        <span>Jumlah kosakata</span>
+        <span id="quiz-progress-text">1/241</span>
+      </div>
+      
+      <!-- PROGRESS SEDERHANA -->
+      <div class="quiz-progress-container">
+        <div class="quiz-progress-info">
+          <div class="quiz-progress-stats">
+            <div class="quiz-stat-item">
+              <span class="quiz-stat-icon">✅</span>
+              <span class="quiz-stat-label">Benar:</span>
+              <span class="quiz-stat-value" id="quiz-correct-count">0</span>
+            </div>
+            <div class="quiz-stat-item">
+              <span class="quiz-stat-icon">❌</span>
+              <span class="quiz-stat-label">Salah:</span>
+              <span class="quiz-stat-value" id="quiz-wrong-count">0</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <h2 id="quiz-question">Pertanyaan muncul di sini</h2>
-
-      <p id="quiz-answer" class="quiz-answer"></p>
+      <h2 id="quiz-question">Memuat soal...</h2>
+      
+      <div id="quiz-options" class="quiz-options"></div>
+      <div id="quiz-feedback" class="quiz-feedback"></div>
 
       <div class="quiz-buttons">
-        <button onclick="showAnswer()" class="btn-outline">Lihat Jawaban</button>
-        <button onclick="correctAnswer()" class="btn-primary">Benar</button>
-        <button onclick="nextQuiz()" class="btn-secondary">Lewati</button>
+        <button onclick="showAnswer()" class="btn-outline">🔍 Lihat Jawaban</button>
+        <button onclick="skipQuiz()" class="btn-secondary">⏩ Lewati</button>
       </div>
-
     </div>
-
   </div>
-
 </section>
-
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
