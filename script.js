@@ -3184,22 +3184,19 @@ const vocabulary = [
   level: 2
 },
 ];
-
 // ===============================
-// GLOBAL STATE - VERSI BARU
+// GLOBAL STATE
 // ===============================
 let currentCategory = "all";
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 let showFavoritesOnly = false;
 
-// QUIZ STATE - SEMUA BARU!
-let currentQuestions = [];     // Menyimpan SEMUA kosakata (348)
-let currentIndex = 0;          // Index soal sekarang (0 = soal pertama)
-let totalCorrect = 0;          // Total jawaban benar
-let totalWrong = 0;            // Total jawaban salah
-let quizLocked = false;        // Mencegah klik 2 kali
-let currentOptions = [];       // Pilihan jawaban saat ini
-
+// QUIZ STATE
+let currentQuestions = [];
+let currentIndex = 0;
+let totalCorrect = 0;
+let totalWrong = 0;
+let quizLocked = false;
 
 // ===============================
 // DEBOUNCE FUNCTION
@@ -3220,55 +3217,14 @@ function debounce(func, wait) {
 // NAVIGATION
 // ===============================
 function showSection(id) {
-  document.querySelectorAll(".section").forEach(sec => {
-    sec.style.display = "none";
-  });
-
+  document.querySelectorAll(".section").forEach(sec => sec.style.display = "none");
   const target = document.getElementById(id);
-  if (target) {
-    target.style.display = "block";
-  }
-  
-  document.querySelectorAll(".home-only").forEach(el => {
-    if (id === "home") {
-      el.style.display = "";
-    } else {
-      el.style.display = "none";
-    }
-  });
+  if (target) target.style.display = "block";
 
-  if (id === "kamus") {
-    setTimeout(() => {
-      renderList();
-    }, 50);
-  }
-
-  if (id === "quiz") {
-    renderQuiz();
-  }
-}
-
-// ===============================
-// NAVIGATION - SHOW SECTION
-// ===============================
-function showSection(id) {
-  // Sembunyikan semua section
-  document.querySelectorAll(".section").forEach(sec => {
-    sec.style.display = "none";
-  });
-
-  // Tampilkan section yang dipilih
-  const target = document.getElementById(id);
-  if (target) {
-    target.style.display = "block";
-  }
-  
-  // Atur logo home-only
   document.querySelectorAll(".home-only").forEach(el => {
     el.style.display = id === "home" ? "" : "none";
   });
 
-  // Tutup hamburger setelah pilih menu (untuk mobile)
   if (window.innerWidth <= 768) {
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinks = document.getElementById('navLinks');
@@ -3278,42 +3234,21 @@ function showSection(id) {
     }
   }
 
-  // Render konten sesuai section
-  if (id === "kamus") {
-    setTimeout(() => renderList(), 50);
-  }
-
-  if (id === "quiz") {
-    renderQuiz();
-  }
+  if (id === "kamus") setTimeout(() => renderList(), 50);
+  if (id === "quiz") renderQuiz();
 }
 
-// ===============================
-// TOGGLE HAMBURGER MENU
-// ===============================
 function toggleMenu(el) {
   if (!el) return;
-  
-  // Toggle class active pada hamburger
   el.classList.toggle("active");
-  
-  // Toggle class active pada nav links
   const navLinks = document.getElementById("navLinks");
-  if (navLinks) {
-    navLinks.classList.toggle("active");
-  }
+  if (navLinks) navLinks.classList.toggle("active");
 }
 
-// ===============================
-// TUTUP MENU SAAT KLIK DI LUAR
-// ===============================
 document.addEventListener('click', function(event) {
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.getElementById('navLinks');
-  
-  // Cek apakah dalam mode mobile
   if (window.innerWidth <= 768 && menuToggle && navLinks) {
-    // Jika klik di luar hamburger dan nav links
     if (!menuToggle.contains(event.target) && !navLinks.contains(event.target)) {
       menuToggle.classList.remove('active');
       navLinks.classList.remove('active');
@@ -3321,9 +3256,6 @@ document.addEventListener('click', function(event) {
   }
 });
 
-// ===============================
-// TUTUP MENU SAAT RESIZE LAYAR
-// ===============================
 window.addEventListener('resize', function() {
   if (window.innerWidth > 768) {
     const menuToggle = document.querySelector('.menu-toggle');
@@ -3335,66 +3267,42 @@ window.addEventListener('resize', function() {
   }
 });
 
-// ===============================
-// AUDIO
-// ===============================
 function playAudio(src) {
   const audio = new Audio(src);
   audio.play();
 }
 
 // ===============================
-// CATEGORY FILTER
+// KATEGORI & FAVORIT
 // ===============================
 function setCategory(cat, el) {
   currentCategory = cat;
   showFavoritesOnly = false;
-  
-  // Reset tampilan tab favorit
   const favTab = document.getElementById("favorites-tab");
-  if (favTab) {
-    favTab.classList.remove("favorite-tab");
-  }
-  
+  if (favTab) favTab.classList.remove("favorite-tab");
   renderList();
-
-  document.querySelectorAll(".tab-btn").forEach(btn =>
-    btn.classList.remove("active")
-  );
-
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   if (el) el.classList.add("active");
 }
 
-// ===============================
-// SHOW FAVORITES ONLY
-// ===============================
 function showFavorites() {
   showFavoritesOnly = !showFavoritesOnly;
-  
   const favTab = document.getElementById("favorites-tab");
   if (favTab) {
     if (showFavoritesOnly) {
       favTab.classList.add("favorite-tab");
-      // Nonaktifkan category filter
       document.querySelectorAll(".tab-btn").forEach(btn => {
-        if (btn.id !== "favorites-tab") {
-          btn.classList.remove("active");
-        }
+        if (btn.id !== "favorites-tab") btn.classList.remove("active");
       });
     } else {
       favTab.classList.remove("favorite-tab");
     }
   }
-  
   renderList();
 }
 
-// ===============================
-// TOGGLE FAVORITE
-// ===============================
 function toggleFavorite(mandarin, event) {
   event.stopPropagation();
-  
   if (favorites.includes(mandarin)) {
     favorites = favorites.filter(f => f !== mandarin);
     showToast("💔 Dihapus dari favorit");
@@ -3402,76 +3310,43 @@ function toggleFavorite(mandarin, event) {
     favorites.push(mandarin);
     showToast("❤️ Ditambahkan ke favorit");
   }
-  
   localStorage.setItem('favorites', JSON.stringify(favorites));
   renderList();
 }
 
-// ===============================
-// SHOW TOAST
-// ===============================
 function showToast(message) {
   const oldToast = document.querySelector(".toast-message");
   if (oldToast) oldToast.remove();
-  
   const toast = document.createElement("div");
   toast.className = "toast-message";
   toast.textContent = message;
   document.body.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.remove();
-  }, 2000);
+  setTimeout(() => toast.remove(), 2000);
 }
 
-// ===============================
-// RENDER VOCAB LIST (DENGAN BOOKMARK)
-// ===============================
 function renderList() {
   const searchInput = document.getElementById("search");
   const list = document.getElementById("vocab-list");
-
   if (!searchInput || !list) return;
-
   const search = searchInput.value.toLowerCase();
   list.innerHTML = "";
-
   let filtered = vocabulary.filter(item => {
     const matchSearch =
       item.indonesia.toLowerCase().includes(search) ||
       item.mandarin.includes(search) ||
       item.pinyin.toLowerCase().includes(search);
-
-    const matchCategory =
-      currentCategory === "all" ||
-      item.category === currentCategory;
-
+    const matchCategory = currentCategory === "all" || item.category === currentCategory;
     return matchSearch && matchCategory;
   });
-  
-  // Filter favorit kalau mode favorit aktif
-  if (showFavoritesOnly) {
-    filtered = filtered.filter(item => favorites.includes(item.mandarin));
-  }
-
+  if (showFavoritesOnly) filtered = filtered.filter(item => favorites.includes(item.mandarin));
   if (filtered.length === 0) {
-    const emptyCard = document.createElement("div");
-    emptyCard.className = "empty-state";
-    emptyCard.innerHTML = `
-      <div class="empty-icon">😕</div>
-      <div class="empty-text">Waduh, tidak ditemukan!</div>
-      <div class="empty-suggestion">${showFavoritesOnly ? 'Belum ada favorit nih, klik ⭐ di kosakata' : 'Coba kata kunci lain atau pilih kategori berbeda'}</div>
-    `;
-    list.appendChild(emptyCard);
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">😕</div><div class="empty-text">Waduh, tidak ditemukan!</div><div class="empty-suggestion">${showFavoritesOnly ? 'Belum ada favorit nih, klik ⭐ di kosakata' : 'Coba kata kunci lain atau pilih kategori berbeda'}</div></div>`;
     return;
   }
-
   filtered.forEach(item => {
+    const isFav = favorites.includes(item.mandarin);
     const card = document.createElement("div");
     card.className = "card";
-    
-    const isFav = favorites.includes(item.mandarin);
-
     card.innerHTML = `
       <div class="card-left">
         <div class="mandarin">${item.mandarin}</div>
@@ -3485,32 +3360,24 @@ function renderList() {
         <button class="audio-btn">🔊</button>
       </div>
     `;
-
-    card.querySelector(".audio-btn")
-        .addEventListener("click", () => playAudio(item.audio));
-
+    card.querySelector(".audio-btn").addEventListener("click", () => playAudio(item.audio));
     list.appendChild(card);
   });
 }
-// INIT QUIZ
+
+// ===============================
+// QUIZ (tanpa quiz-progress-text)
+// ===============================
 function initQuiz() {
-  // Ambil SEMUA kosakata, tanpa level
   currentQuestions = [...vocabulary];
-  
-  // Acak soal biar variatif
   shuffleArray(currentQuestions);
-  
-  // Reset state
   currentIndex = 0;
   totalCorrect = 0;
   totalWrong = 0;
-  totalAnswered = 0;
   quizLocked = false;
-  
   renderQuiz();
 }
 
-// FUNGSI ACAK
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -3519,84 +3386,46 @@ function shuffleArray(array) {
   return array;
 }
 
-// FUNGSI GET RANDOM OPTIONS
 function getRandomOptions(correctAnswer, count = 3) {
-  // Ambil semua kosakata
   const allWords = vocabulary.map(item => item.indonesia);
-  
-  // Filter selain jawaban benar
   const otherOptions = allWords.filter(word => word !== correctAnswer);
-  
-  // Hapus duplikat
   const uniqueOptions = [...new Set(otherOptions)];
-  
-  // Acak
   const shuffled = shuffleArray(uniqueOptions);
-  
-  // Ambil sebanyak count
   const selected = shuffled.slice(0, count);
-  
-  // Gabungkan dengan jawaban benar
   const options = [...selected, correctAnswer];
-  
-  // Acak lagi
   return shuffleArray(options);
 }
 
-// UPDATE STATISTIK
+// UPDATE STATISTIK: hanya benar/salah
 function updateStats() {
-  const progressText = document.getElementById("quiz-progress-text");
   const correctCount = document.getElementById("quiz-correct-count");
   const wrongCount = document.getElementById("quiz-wrong-count");
-  const totalSoal = currentQuestions.length;
-  
-  if (progressText) {
-    progressText.textContent = `${currentIndex + 1}/${totalSoal}`;
-  }
-  
-  if (correctCount) {
-    correctCount.textContent = totalCorrect;
-  }
-  
-  if (wrongCount) {
-    wrongCount.textContent = totalWrong;
-  }
+  if (correctCount) correctCount.textContent = totalCorrect;
+  if (wrongCount) wrongCount.textContent = totalWrong;
 }
 
-// RENDER QUIZ
 function renderQuiz() {
   const question = document.getElementById("quiz-question");
   const optionsContainer = document.getElementById("quiz-options");
   const feedback = document.getElementById("quiz-feedback");
-
   if (!question || !optionsContainer) return;
 
-  // Cek apakah masih ada soal
   if (currentIndex >= currentQuestions.length) {
-    // Tampilkan layar selesai
     showCompletionScreen();
     return;
   }
 
   const current = currentQuestions[currentIndex];
-  
-  // Tampilkan pertanyaan
   question.textContent = current.mandarin;
-  
-  // Hapus pinyin lama
+
   const oldPinyin = document.querySelector(".quiz-pinyin");
   if (oldPinyin) oldPinyin.remove();
-  
-  // Tambah pinyin baru
   const pinyinHint = document.createElement("div");
   pinyinHint.className = "quiz-pinyin";
   pinyinHint.textContent = current.pinyin;
   question.after(pinyinHint);
 
-  // Generate opsi (3 salah + 1 benar)
   const options = getRandomOptions(current.indonesia, 3);
-
-  // Tampilkan opsi
   optionsContainer.innerHTML = "";
   options.forEach(option => {
     const optionBtn = document.createElement("div");
@@ -3606,130 +3435,79 @@ function renderQuiz() {
     optionsContainer.appendChild(optionBtn);
   });
 
-  // Reset feedback
   if (feedback) {
     feedback.innerHTML = "";
     feedback.className = "quiz-feedback";
   }
-  
   quizLocked = false;
-  
-  // Update statistik
   updateStats();
 }
 
-// CEK JAWABAN
 function checkAnswer(selected, correct) {
   if (quizLocked) return;
-  
   const options = document.querySelectorAll(".quiz-option");
   const feedback = document.getElementById("quiz-feedback");
-  
   quizLocked = true;
-  
-  options.forEach(opt => {
-    opt.classList.add("disabled");
-  });
-  
+
+  options.forEach(opt => opt.classList.add("disabled"));
+
   if (selected === correct) {
-    // JAWABAN BENAR
     totalCorrect++;
-    
     options.forEach(opt => {
-      if (opt.textContent === correct) {
-        opt.classList.add("correct");
-      }
+      if (opt.textContent === correct) opt.classList.add("correct");
     });
-    
     feedback.innerHTML = "✅ Benar!";
     feedback.className = "quiz-feedback feedback-correct";
-    
   } else {
-    // JAWABAN SALAH
     totalWrong++;
-    
     options.forEach(opt => {
-      if (opt.textContent === selected) {
-        opt.classList.add("wrong");
-      }
-      if (opt.textContent === correct) {
-        opt.classList.add("correct");
-      }
+      if (opt.textContent === selected) opt.classList.add("wrong");
+      if (opt.textContent === correct) opt.classList.add("correct");
     });
-    
     feedback.innerHTML = `❌ Salah. Jawaban: ${correct}`;
     feedback.className = "quiz-feedback feedback-wrong";
   }
-  
-  totalAnswered = totalCorrect + totalWrong;
-  
-  // Update statistik
   updateStats();
-  
-  // Otomatis lanjut ke soal berikutnya setelah 1.5 detik
-  setTimeout(() => {
-    nextQuiz();
-  }, 1500);
+  setTimeout(() => nextQuiz(), 1500);
 }
 
-// NEXT QUIZ - LANJUT KE SOAL BERIKUTNYA
 function nextQuiz() {
   currentIndex++;
   renderQuiz();
 }
 
-// LEWATI - LANGSUNG GANTI SOAL
 function skipQuiz() {
-  if (quizLocked) return; // Kalau sudah dijawab, tidak bisa lewati
-  
+  if (quizLocked) return;
   currentIndex++;
   renderQuiz();
 }
 
-// LIHAT JAWABAN
 function showAnswer() {
   if (quizLocked) return;
-  
   const options = document.querySelectorAll(".quiz-option");
   const feedback = document.getElementById("quiz-feedback");
   const current = currentQuestions[currentIndex];
-  
   quizLocked = true;
-  
   options.forEach(opt => {
     opt.classList.add("disabled");
-    if (opt.textContent === current.indonesia) {
-      opt.classList.add("correct");
-    }
+    if (opt.textContent === current.indonesia) opt.classList.add("correct");
   });
-  
   feedback.innerHTML = `🔍 Jawaban: ${current.indonesia}`;
   feedback.className = "quiz-feedback";
-  
-  // Hitung sebagai salah? Terserah, bisa diatur
-  // totalWrong++; // Kalau mau dihitung salah
-  
   updateStats();
-  
-  // Otomatis lanjut setelah 2 detik
-  setTimeout(() => {
-    nextQuiz();
-  }, 2000);
+  setTimeout(() => nextQuiz(), 2000);
 }
 
-// TAMPILAN SELESAI
+// TAMPILAN SELESAI - Tanpa ucapan selamat
 function showCompletionScreen() {
   const question = document.getElementById("quiz-question");
   const optionsContainer = document.getElementById("quiz-options");
   const feedback = document.getElementById("quiz-feedback");
   const progressContainer = document.querySelector(".quiz-progress-container");
-  
+
+  // Kosongkan area pertanyaan (hapus ucapan selamat)
   if (question) {
-    question.innerHTML = `
-      <div style="font-size: 60px; margin: 20px 0;">🎉</div>
-      <div style="font-size: 32px; color: #1d4ed8; margin-bottom: 15px;">Selamat!</div>
-      <div style="font-size: 20px; color: #334155; margin-bottom: 10px;">Kamu sudah menyelesaikan semua kosakata</div>
-    `;
+    question.innerHTML = "";
   }
   
   if (optionsContainer) {
@@ -3750,9 +3528,7 @@ function showCompletionScreen() {
           </div>
         </div>
       </div>
-      <button onclick="restartQuiz()" class="btn-primary" style="margin-top: 20px; padding: 15px 30px;">
-        🔄 Mulai Lagi
-      </button>
+      <button onclick="restartQuiz()" class="btn-primary" style="margin-top: 20px; padding: 15px 30px;">🔄 Mulai Lagi</button>
     `;
   }
   
@@ -3760,48 +3536,26 @@ function showCompletionScreen() {
   if (progressContainer) progressContainer.style.display = "none";
 }
 
-// MULAI LAGI
 function restartQuiz() {
   initQuiz();
-  
-  // Tampilkan kembali elemen yang disembunyikan
   const feedback = document.getElementById("quiz-feedback");
   const progressContainer = document.querySelector(".quiz-progress-container");
-  
   if (feedback) feedback.style.display = "block";
   if (progressContainer) progressContainer.style.display = "block";
 }
 
-// INIT SAAT HALAMAN DIMUAT
-document.addEventListener("DOMContentLoaded", function() {
-  // ... kode lain ...
-  
-  // Inisialisasi quiz
-  setTimeout(() => {
-    initQuiz();
-  }, 100);
-});
+// ===============================
 // DEBOUNCED RENDER LIST
-const debouncedRenderList = debounce(function() {
-  renderList();
-}, 300);
+// ===============================
+const debouncedRenderList = debounce(() => renderList(), 300);
 
 // ===============================
 // INIT
 // ===============================
 document.addEventListener("DOMContentLoaded", function () {
   showSection("home");
-  
-  document.querySelectorAll(".home-only").forEach(el => {
-    el.style.display = "block";
-  });
-
+  document.querySelectorAll(".home-only").forEach(el => el.style.display = "block");
   const search = document.getElementById("search");
-  if (search) {
-    search.addEventListener("input", debouncedRenderList);
-  }
-  
-  setTimeout(() => {
-    renderQuiz();
-  }, 100);
+  if (search) search.addEventListener("input", debouncedRenderList);
+  setTimeout(() => renderQuiz(), 100);
 });
