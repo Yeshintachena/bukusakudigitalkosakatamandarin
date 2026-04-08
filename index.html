@@ -21,7 +21,8 @@
       <img src="1000009464.png" alt="Logo Donlim">
     </a>
   </div>
-  </a>
+  <!-- HAPUS: </a> yang tidak perlu -->
+
   <header class="header">
     <div class="header-text">
       <h1>Buku Saku Digital Kosakata Mandarin </h1>
@@ -62,7 +63,6 @@
         <input type="text" id="search" placeholder="Cari Indonesia / Mandarin / Pinyin...">
         <span class="search-icon">🔍</span>
       </div>
-      
       <div class="tabs">
         <button class="tab-btn active" onclick="setCategory('all', this)">Semua</button>
         <button class="tab-btn" onclick="setCategory('umum', this)">Kosakata Umum</button>
@@ -74,12 +74,11 @@
     <div id="vocab-list" class="list"></div>
   </section>
 
-  <!-- SECTION QUIZ 
+  <!-- SECTION QUIZ -->
   <section id="quiz" class="section">
     <div class="quiz-container">
       <div class="quiz-card">
-        
-        <!-- PROGRESS SEDERHANA (hanya benar/salah) -->
+        <!-- Statistik benar/salah (tanpa progress jumlah kosakata) -->
         <div class="quiz-progress-container">
           <div class="quiz-progress-info">
             <div class="quiz-progress-stats">
@@ -98,7 +97,6 @@
         </div>
 
         <h2 id="quiz-question">Memuat soal...</h2>
-        
         <div id="quiz-options" class="quiz-options"></div>
         <div id="quiz-feedback" class="quiz-feedback"></div>
 
