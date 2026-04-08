@@ -48,6 +48,7 @@
       </div>
     </div>
   </nav>
+
   <!-- SECTION HOME -->
   <section id="home" class="section">
     <div class="bg-top home-only"></div>
@@ -72,45 +73,44 @@
     </div>
     <div id="vocab-list" class="list"></div>
   </section>
-  <!-- SECTION QUIZ -->
-<section id="quiz" class="section">
-  <div class="quiz-container">
-    <div class="quiz-card">
-      <div class="quiz-header">
-        <span>Jumlah kosakata</span>
-        <span id="quiz-progress-text">1/241</span>
-      </div>
-      
-      <!-- PROGRESS SEDERHANA -->
-      <div class="quiz-progress-container">
-        <div class="quiz-progress-info">
-          <div class="quiz-progress-stats">
-            <div class="quiz-stat-item">
-              <span class="quiz-stat-icon">✅</span>
-              <span class="quiz-stat-label">Benar:</span>
-              <span class="quiz-stat-value" id="quiz-correct-count">0</span>
-            </div>
-            <div class="quiz-stat-item">
-              <span class="quiz-stat-icon">❌</span>
-              <span class="quiz-stat-label">Salah:</span>
-              <span class="quiz-stat-value" id="quiz-wrong-count">0</span>
+
+  <!-- SECTION QUIZ (quiz-header sudah dihapus) -->
+  <section id="quiz" class="section">
+    <div class="quiz-container">
+      <div class="quiz-card">
+        <!-- Bagian quiz-header yang berisi "Jumlah kosakata" dan progress text telah dihapus -->
+        
+        <!-- PROGRESS SEDERHANA (hanya benar/salah) -->
+        <div class="quiz-progress-container">
+          <div class="quiz-progress-info">
+            <div class="quiz-progress-stats">
+              <div class="quiz-stat-item">
+                <span class="quiz-stat-icon">✅</span>
+                <span class="quiz-stat-label">Benar:</span>
+                <span class="quiz-stat-value" id="quiz-correct-count">0</span>
+              </div>
+              <div class="quiz-stat-item">
+                <span class="quiz-stat-icon">❌</span>
+                <span class="quiz-stat-label">Salah:</span>
+                <span class="quiz-stat-value" id="quiz-wrong-count">0</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <h2 id="quiz-question">Memuat soal...</h2>
-      
-      <div id="quiz-options" class="quiz-options"></div>
-      <div id="quiz-feedback" class="quiz-feedback"></div>
+        <h2 id="quiz-question">Memuat soal...</h2>
+        
+        <div id="quiz-options" class="quiz-options"></div>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
 
-      <div class="quiz-buttons">
-        <button onclick="showAnswer()" class="btn-outline">🔍 Lihat Jawaban</button>
-        <button onclick="skipQuiz()" class="btn-secondary">⏩ Lewati</button>
+        <div class="quiz-buttons">
+          <button onclick="showAnswer()" class="btn-outline">🔍 Lihat Jawaban</button>
+          <button onclick="skipQuiz()" class="btn-secondary">⏩ Lewati</button>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
   <script src="script.js"></script>
 </body>
 </html>
