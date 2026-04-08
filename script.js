@@ -3366,7 +3366,7 @@ function renderList() {
 }
 
 // ===============================
-// QUIZ (tanpa quiz-progress-text)
+// QUIZ (dengan tombol Lihat Jawaban & Lewati)
 // ===============================
 function initQuiz() {
   currentQuestions = [...vocabulary];
@@ -3375,6 +3375,7 @@ function initQuiz() {
   totalCorrect = 0;
   totalWrong = 0;
   quizLocked = false;
+  updateStatsDisplay();
   renderQuiz();
 }
 
@@ -3396,28 +3397,28 @@ function getRandomOptions(correctAnswer, count = 3) {
   return shuffleArray(options);
 }
 
-// UPDATE STATISTIK: hanya benar/salah
-function updateStats() {
-  const correctCount = document.getElementById("quiz-correct-count");
-  const wrongCount = document.getElementById("quiz-wrong-count");
-  if (correctCount) correctCount.textContent = totalCorrect;
-  if (wrongCount) wrongCount.textContent = totalWrong;
+function updateStatsDisplay() {
+  const correctCountEl = document.getElementById("quiz-correct-count");
+  const wrongCountEl = document.getElementById("quiz-wrong-count");
+  if (correctCountEl) correctCountEl.textContent = totalCorrect;
+  if (wrongCountEl) wrongCountEl.textContent = totalWrong;
 }
 
 function renderQuiz() {
   const question = document.getElementById("quiz-question");
   const optionsContainer = document.getElementById("quiz-options");
-  const feedback = document.getElementById("quiz-feedback");
   if (!question || !optionsContainer) return;
 
   if (currentIndex >= currentQuestions.length) {
-    showCompletionScreen();
+    question.innerHTML = "Quiz selesai!";
+    optionsContainer.innerHTML = "";
     return;
   }
 
   const current = currentQuestions[currentIndex];
   question.textContent = current.mandarin;
 
+  // Hapus pinyin lama, tambah baru
   const oldPinyin = document.querySelector(".quiz-pinyin");
   if (oldPinyin) oldPinyin.remove();
   const pinyinHint = document.createElement("div");
@@ -3434,41 +3435,33 @@ function renderQuiz() {
     optionBtn.onclick = () => checkAnswer(option, current.indonesia);
     optionsContainer.appendChild(optionBtn);
   });
-
-  if (feedback) {
-    feedback.innerHTML = "";
-    feedback.className = "quiz-feedback";
-  }
   quizLocked = false;
-  updateStats();
 }
 
 function checkAnswer(selected, correct) {
   if (quizLocked) return;
   const options = document.querySelectorAll(".quiz-option");
-  const feedback = document.getElementById("quiz-feedback");
   quizLocked = true;
 
   options.forEach(opt => opt.classList.add("disabled"));
 
+  // Tandai jawaban benar
+  options.forEach(opt => {
+    if (opt.textContent === correct) opt.classList.add("correct");
+  });
+
   if (selected === correct) {
     totalCorrect++;
-    options.forEach(opt => {
-      if (opt.textContent === correct) opt.classList.add("correct");
-    });
-    feedback.innerHTML = "✅ Benar!";
-    feedback.className = "quiz-feedback feedback-correct";
+    updateStatsDisplay();
+    setTimeout(() => nextQuiz(), 500);
   } else {
     totalWrong++;
+    updateStatsDisplay();
     options.forEach(opt => {
       if (opt.textContent === selected) opt.classList.add("wrong");
-      if (opt.textContent === correct) opt.classList.add("correct");
     });
-    feedback.innerHTML = `❌ Salah. Jawaban: ${correct}`;
-    feedback.className = "quiz-feedback feedback-wrong";
+    setTimeout(() => nextQuiz(), 1500);
   }
-  updateStats();
-  setTimeout(() => nextQuiz(), 1500);
 }
 
 function nextQuiz() {
@@ -3476,72 +3469,28 @@ function nextQuiz() {
   renderQuiz();
 }
 
-function skipQuiz() {
-  if (quizLocked) return;
-  currentIndex++;
-  renderQuiz();
-}
-
+// Tombol Lihat Jawaban
 function showAnswer() {
   if (quizLocked) return;
   const options = document.querySelectorAll(".quiz-option");
-  const feedback = document.getElementById("quiz-feedback");
   const current = currentQuestions[currentIndex];
   quizLocked = true;
+
   options.forEach(opt => {
     opt.classList.add("disabled");
-    if (opt.textContent === current.indonesia) opt.classList.add("correct");
+    if (opt.textContent === current.indonesia) {
+      opt.classList.add("correct");
+    }
   });
-  feedback.innerHTML = `🔍 Jawaban: ${current.indonesia}`;
-  feedback.className = "quiz-feedback";
-  updateStats();
-  setTimeout(() => nextQuiz(), 2000);
+  // Tidak menambah benar/salah, hanya tampilkan jawaban
+  setTimeout(() => nextQuiz(), 1500);
 }
 
-// TAMPILAN SELESAI - Tanpa ucapan selamat
-function showCompletionScreen() {
-  const question = document.getElementById("quiz-question");
-  const optionsContainer = document.getElementById("quiz-options");
-  const feedback = document.getElementById("quiz-feedback");
-  const progressContainer = document.querySelector(".quiz-progress-container");
-
-  // Kosongkan area pertanyaan (hapus ucapan selamat)
-  if (question) {
-    question.innerHTML = "";
-  }
-  
-  if (optionsContainer) {
-    optionsContainer.innerHTML = `
-      <div style="background: #f8fafc; padding: 25px; border-radius: 20px; margin: 20px 0;">
-        <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
-          <div style="text-align: center;">
-            <div style="font-size: 36px; font-weight: 700; color: #10b981;">${totalCorrect}</div>
-            <div style="color: #64748b;">Benar</div>
-          </div>
-          <div style="text-align: center;">
-            <div style="font-size: 36px; font-weight: 700; color: #ef4444;">${totalWrong}</div>
-            <div style="color: #64748b;">Salah</div>
-          </div>
-          <div style="text-align: center;">
-            <div style="font-size: 36px; font-weight: 700; color: #1d4ed8;">${totalCorrect + totalWrong}</div>
-            <div style="color: #64748b;">Total</div>
-          </div>
-        </div>
-      </div>
-      <button onclick="restartQuiz()" class="btn-primary" style="margin-top: 20px; padding: 15px 30px;">🔄 Mulai Lagi</button>
-    `;
-  }
-  
-  if (feedback) feedback.style.display = "none";
-  if (progressContainer) progressContainer.style.display = "none";
-}
-
-function restartQuiz() {
-  initQuiz();
-  const feedback = document.getElementById("quiz-feedback");
-  const progressContainer = document.querySelector(".quiz-progress-container");
-  if (feedback) feedback.style.display = "block";
-  if (progressContainer) progressContainer.style.display = "block";
+// Tombol Lewati
+function skipQuiz() {
+  if (quizLocked) return;
+  quizLocked = true;
+  setTimeout(() => nextQuiz(), 100);
 }
 
 // ===============================
@@ -3557,5 +3506,5 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".home-only").forEach(el => el.style.display = "block");
   const search = document.getElementById("search");
   if (search) search.addEventListener("input", debouncedRenderList);
-  setTimeout(() => renderQuiz(), 100);
+  initQuiz();
 });
